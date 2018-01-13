@@ -3,3 +3,6 @@
 # Variety
 <img width="373" alt="amclock" src="https://user-images.githubusercontent.com/34936885/34641906-29d09d4c-f34e-11e7-8fb8-0e9637f1092d.png">
 
+# License
+MIT
+
