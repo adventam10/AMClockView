@@ -87,46 +87,46 @@ public protocol AMClockViewDelegate: class {
         }
     }
     
-    weak var delegate: AMClockViewDelegate?
+    public weak var delegate: AMClockViewDelegate?
     
     /// watch dials
-    var clockType = AMCVClockType.arabic
+    public var clockType = AMCVClockType.arabic
     
-    @IBInspectable var clockBorderLineWidth:CGFloat = 5.0
+    @IBInspectable public var clockBorderLineWidth:CGFloat = 5.0
     
-    @IBInspectable var smallClockIndexWidth:CGFloat = 1.0
+    @IBInspectable public var smallClockIndexWidth:CGFloat = 1.0
     
-    @IBInspectable var clockIndexWidth:CGFloat = 2.0
+    @IBInspectable public var clockIndexWidth:CGFloat = 2.0
     
-    @IBInspectable var hourHandWidth:CGFloat = 5.0
+    @IBInspectable public var hourHandWidth:CGFloat = 5.0
     
-    @IBInspectable var minuteHandWidth:CGFloat = 3.0
+    @IBInspectable public var minuteHandWidth:CGFloat = 3.0
     
-    @IBInspectable var clockBorderLineColor:UIColor = UIColor.black
+    @IBInspectable public var clockBorderLineColor:UIColor = UIColor.black
     
-    @IBInspectable var centerCircleLineColor:UIColor = UIColor.darkGray
+    @IBInspectable public var centerCircleLineColor:UIColor = UIColor.darkGray
     
-    @IBInspectable var hourHandColor:UIColor = UIColor.black
+    @IBInspectable public var hourHandColor:UIColor = UIColor.black
     
-    @IBInspectable var minuteHandColor:UIColor = UIColor.black
+    @IBInspectable public var minuteHandColor:UIColor = UIColor.black
     
-    @IBInspectable var selectedTimeLabelTextColor:UIColor = UIColor.black
+    @IBInspectable public var selectedTimeLabelTextColor:UIColor = UIColor.black
     
-    @IBInspectable var timeLabelTextColor:UIColor = UIColor.black
+    @IBInspectable public var timeLabelTextColor:UIColor = UIColor.black
     
-    @IBInspectable var smallClockIndexColor:UIColor = UIColor.black
+    @IBInspectable public var smallClockIndexColor:UIColor = UIColor.black
     
-    @IBInspectable var clockIndexColor:UIColor = UIColor.black
+    @IBInspectable public var clockIndexColor:UIColor = UIColor.black
     
-    @IBInspectable var clockColor:UIColor = UIColor.clear
+    @IBInspectable public var clockColor:UIColor = UIColor.clear
     
-    @IBInspectable var clockImage:UIImage?
+    @IBInspectable public var clockImage:UIImage?
     
-    @IBInspectable var minuteHandImage:UIImage?
+    @IBInspectable public var minuteHandImage:UIImage?
     
-    @IBInspectable var hourHandImage:UIImage?
+    @IBInspectable public var hourHandImage:UIImage?
     
-    @IBInspectable var isShowSelectedTime:Bool = false {
+    @IBInspectable public var isShowSelectedTime:Bool = false {
         
         didSet {
             
@@ -134,7 +134,7 @@ public protocol AMClockViewDelegate: class {
         }
     }
 
-    var selectedDate:Date? {
+    public var selectedDate:Date? {
         
         didSet{
             
