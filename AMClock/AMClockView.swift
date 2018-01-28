@@ -8,19 +8,19 @@
 
 import UIKit
 
-enum AMCVTimeEditType{
+public enum AMCVTimeEditType{
     case none
     case hour
     case minute
 }
 
-enum AMCVDateFormat:String {
+public enum AMCVDateFormat:String {
     case hour = "HH"
     case minute = "mm"
     case time = "HH:mm"
 }
 
-enum AMCVClockType {
+public enum AMCVClockType {
     case none
     case arabic
     case roman
@@ -38,12 +38,12 @@ enum AMCVClockType {
     }
 }
 
-protocol AMClockViewDelegate: class {
+public protocol AMClockViewDelegate: class {
     
     func clockView(clockView:AMClockView, didChangeDate date:Date)
 }
 
-@IBDesignable class AMClockView: UIView {
+@IBDesignable public class AMClockView: UIView {
     
     private let clockSpace:CGFloat = 10
     
@@ -79,7 +79,7 @@ protocol AMClockViewDelegate: class {
     
     private var currentDate = Date()
     
-    override var bounds: CGRect {
+    override public var bounds: CGRect {
         
         didSet {
             
@@ -152,7 +152,7 @@ protocol AMClockViewDelegate: class {
     }
     
     //MARK:Initialize
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         
         super.init(coder:aDecoder)
         initView()
@@ -175,7 +175,7 @@ protocol AMClockViewDelegate: class {
         dateFormatter.locale = Locale(identifier: "ja_JP")
     }
     
-    override func draw(_ rect: CGRect) {
+    override public func draw(_ rect: CGRect) {
         
         redrawClock()
     }
