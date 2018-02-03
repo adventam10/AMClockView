@@ -27,6 +27,13 @@ The minute hand moves  when you draged outside of central circle.
 
 ## Installation
 
+### CocoaPods
+
+Add this to your Podfile.
+```ogdl
+pod 'AMClockView'
+```
+
 ### Carthage
 
 Add this to your Cartfile.
