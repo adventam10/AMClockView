@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController, AMClockViewDelegate {
+class ViewController: UIViewController {
     
     @IBOutlet weak var cView1: AMClockView!
     @IBOutlet weak var cView2: AMClockView!
@@ -22,7 +22,6 @@ class ViewController: UIViewController, AMClockViewDelegate {
     let dateFormatter = DateFormatter()
     
     override func viewDidLoad() {
-        
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         cView1.delegate = self
@@ -38,15 +37,13 @@ class ViewController: UIViewController, AMClockViewDelegate {
     }
 
     override func didReceiveMemoryWarning() {
-        
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+}
 
-
-    func clockView(clockView: AMClockView, didChangeDate date: Date) {
-        
+extension ViewController: AMClockViewDelegate {
+    func clockView(_ clockView: AMClockView, didChangeDate date: Date) {
         timeLabel.text = dateFormatter.string(from: date);
     }
 }
-

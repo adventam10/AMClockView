@@ -38,7 +38,7 @@ public enum AMCVClockType {
 }
 
 public protocol AMClockViewDelegate: class {
-    func clockView(clockView:AMClockView, didChangeDate date:Date)
+    func clockView(_ clockView:AMClockView, didChangeDate date:Date)
 }
 
 @IBDesignable public class AMClockView: UIView {
@@ -702,7 +702,7 @@ public protocol AMClockViewDelegate: class {
     private func changedTime() {
         dateFormatter.dateFormat = AMCVDateFormat.time.rawValue
         selectedTimeLabel.text = dateFormatter.string(from: currentDate)
-        delegate?.clockView(clockView: self, didChangeDate: currentDate)
+        delegate?.clockView(self, didChangeDate: currentDate)
     }
     
     public func redrawClock() {
