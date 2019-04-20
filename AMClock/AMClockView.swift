@@ -233,7 +233,7 @@ public protocol AMClockViewDelegate: class {
         let smallRadius:CGFloat = radius - (radius/20 + clockBorderLineWidth)
         
         let path = UIBezierPath()
-        // 中心から外への線描画
+        // draw line (from center to out)
         for i in 0..<60 {
             if i%5 != 0 {
                 let point = CGPoint(x: centerPoint.x + radius * CGFloat(cosf(angle)),
@@ -267,7 +267,7 @@ public protocol AMClockViewDelegate: class {
         let smallRadius:CGFloat = radius - (radius/10 + clockBorderLineWidth)
         
         let path = UIBezierPath()
-        // 中心から外への線描画
+        // draw line (from center to out)
         for _ in 0..<12 {
             let point = CGPoint(x: centerPoint.x + radius * CGFloat(cosf(angle)),
                                 y: centerPoint.y + radius * CGFloat(sinf(angle)))
@@ -289,7 +289,7 @@ public protocol AMClockViewDelegate: class {
         let length:CGFloat = radius/4
         smallRadius -= length/2
         
-        // 中心から外への線描画
+        // draw line (from center to out)
         for i in 0..<12 {
             let label = UILabel(frame: CGRect(x: 0,
                                               y: 0,
@@ -415,9 +415,8 @@ public protocol AMClockViewDelegate: class {
         }
         
         let point = gesture.location(in: clockView)
-        /// ジェスチャ開始
         if gesture.state == .began {
-            /// 編集モードを設定
+            /// Set edit mode
             if UIBezierPath(cgPath: panHourLayer.path!).contains(point) {
                 editType = .hour
                 startAngle = compensationHourAngle()
@@ -430,7 +429,7 @@ public protocol AMClockViewDelegate: class {
             }
         } else {
             if editType == .none {
-                /// 編集モードを設定
+                /// Set edit mode
                 if UIBezierPath(cgPath: panHourLayer.path!).contains(point) {
                     editType = .hour
                     startAngle = compensationHourAngle()
@@ -440,10 +439,8 @@ public protocol AMClockViewDelegate: class {
                     startAngle = caluculateAngle(minute: dateFormatter.string(from: currentDate))
                 }
             } else if editType == .hour {
-                /// 時間を設定
                 editTimeHour(point: point)
             } else if editType == .minute {
-                /// 分を設定
                 editTimeMinute(point: point)
             }
         }
@@ -504,23 +501,24 @@ public protocol AMClockViewDelegate: class {
         endAngle = angle
         drawMinuteHandLayer(angle: angle)
         
-        var components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: currentDate)
+        var components = calendar.dateComponents([.year, .month, .day, .hour, .minute],
+                                                 from: currentDate)
         components.minute = minute
         currentDate = calendar.date(from: components)!
         
         if endAngle < startAngle {
-            // 12時またぐ場合
             let gap = startAngle - endAngle
             let angle270 = Float(Double.pi/2) * 3
             if gap > angle270 {
-                currentDate = currentDate.addingTimeInterval(60 * 60)// 1時間後
+                // case(through 12o'clock)
+                currentDate = currentDate.addingTimeInterval(60 * 60)// 1 hour ago
             }
         } else {
-            // 12時またぐ場合
             let gap = endAngle - startAngle
             let angle270 = Float(Double.pi/2) * 3
             if gap > angle270 {
-                currentDate = currentDate.addingTimeInterval(-60 * 60)// 1時間前
+                // case(through 12o'clock)
+                currentDate = currentDate.addingTimeInterval(-60 * 60)// 1 hour later
             }
         }
         
@@ -544,17 +542,17 @@ public protocol AMClockViewDelegate: class {
     }
     
     private func calculateRadian(point: CGPoint) -> Float {
-        // 原点　viewの中心
+        // origin(view's center)
         let radius:CGFloat = clockView.frame.width/2
         let centerPoint = CGPoint(x: radius, y: radius)
         
-        // 座標の差を求める 画面の上側をY座標＋とするので、Y座標は符号を入れ替える
+        // Find difference in coordinates.Since the upper side of the screen is the Y coordinate +, the Y coordinate changes the sign.
         let x:Float = Float(point.x - centerPoint.x)
         let y:Float = -Float(point.y - centerPoint.y)
-        // 角度radianを求める
+       
         var radian: Float = atan2f(y, x)
         
-        // radianに補正をする(3/2π~7/2π:0時が3/2π)
+        // To correct radian(3/2π~7/2π: 0 o'clock = 3/2π)
         radian = radian * -1
         if radian < 0 {
             radian += Float(Double.pi*2)
