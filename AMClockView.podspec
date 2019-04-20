@@ -2,7 +2,7 @@ Pod::Spec.new do |s|
     s.name         = "AMClockView"
     s.version      = "2.0"
     s.summary      = "AMClockView is a view can select time."
-    s.license      = { :type => 'MIT', :file => 'LICENSE.txt' }
+    s.license      = { :type => 'MIT', :file => 'LICENSE' }
     s.homepage     = "https://github.com/adventam10/AMClockView"
     s.author       = { "am10" => "adventam10@gmail.com" }
     s.source       = { :git => "https://github.com/adventam10/AMClockView.git", :tag => "#{s.version}" }
