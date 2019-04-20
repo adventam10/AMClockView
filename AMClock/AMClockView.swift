@@ -428,7 +428,8 @@ public protocol AMClockViewDelegate: class {
                 editType = .none
             }
         } else {
-            if editType == .none {
+            switch editType {
+            case .none:
                 /// Set edit mode
                 if UIBezierPath(cgPath: panHourLayer.path!).contains(point) {
                     editType = .hour
@@ -438,9 +439,9 @@ public protocol AMClockViewDelegate: class {
                     dateFormatter.dateFormat = AMCVDateFormat.minute.rawValue
                     startAngle = caluculateAngle(minute: dateFormatter.string(from: currentDate))
                 }
-            } else if editType == .hour {
+            case .hour:
                 editTimeHour(point: point)
-            } else if editType == .minute {
+            case .minute:
                 editTimeMinute(point: point)
             }
         }
