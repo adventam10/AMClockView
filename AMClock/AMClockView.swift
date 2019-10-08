@@ -48,18 +48,21 @@ private class AMClockModel {
         df.locale = Locale(identifier: "ja_JP")
         return df
     }()
+    let angle270 = Float(Double.pi + Double.pi/2)
+    let angle360 = Float(Double.pi * 2)
+    let angle30 = Float(Double.pi / 6)
     
     //MARK: - Calculate
     func calculateHourAngle(radian: Float) -> Float {
-        let hour = (radian - Float(Double.pi + Double.pi/2)) / (Float(Double.pi * 2)/12)
-        let angle = (Float(Double.pi * 2)/12) * Float(Int(hour))
-        return angle + Float(Double.pi + Double.pi/2)
+        let hour = (radian - angle270) / (angle360 / 12)
+        let angle = (angle360 / 12) * Float(Int(hour))
+        return angle + angle270
     }
     
     func caluculateMinuteAngle(radian: Float) -> Float {
-        let minute = (radian - Float(Double.pi + Double.pi/2)) / (Float(Double.pi * 2)/60)
-        let angle = (Float(Double.pi * 2)/60) * Float(Int(minute))
-        return angle + Float(Double.pi + Double.pi/2)
+        let minute = (radian - angle270) / (angle360 / 60)
+        let angle = (angle360 / 60) * Float(Int(minute))
+        return angle + angle270
     }
     
     func calculateRadian(point: CGPoint, radius: CGFloat) -> Float {
@@ -75,18 +78,18 @@ private class AMClockModel {
         // To correct radian(3/2π~7/2π: 0 o'clock = 3/2π)
         radian = radian * -1
         if radian < 0 {
-            radian += Float(Double.pi*2)
+            radian += angle360
         }
         
-        if radian >= 0 && radian < Float(Double.pi + Double.pi/2) {
-            radian += Float(Double.pi*2)
+        if radian >= 0 && radian < angle270 {
+            radian += angle360
         }
         return radian
     }
     
     func caluculateAngle(minute: String) -> Float {
-        let angle = (Float(Double.pi*2)/60) * Float(minute)!
-        return angle + Float(Double.pi + Double.pi/2)
+        let angle = (angle360 / 60) * Float(minute)!
+        return angle + angle270
     }
     
     func caluculateAngle(hour: String) -> Float {
@@ -95,14 +98,14 @@ private class AMClockModel {
             hourInt -= 12
         }
         
-        let angle: Float = (Float(Double.pi*2)/12) * Float(hourInt)
-        return angle + Float(Double.pi + Double.pi/2)
+        let angle: Float = (angle360 / 12) * Float(hourInt)
+        return angle + angle270
     }
     
     func compensationHourAngle(date: Date) -> Float {
         let hourAngle = caluculateAngle(hour: hour(for: date))
         let minuteInt = Int(minute(for: date))!
-        return hourAngle + ((Float(minuteInt)/60.0) * Float(Double.pi/6))
+        return hourAngle + ((Float(minuteInt)/60.0) * angle30)
     }
     
     func adjustFont(rect: CGRect) -> UIFont {
@@ -272,7 +275,7 @@ private class AMClockModel {
         layer.strokeColor = smallClockIndexColor.cgColor
         layer.fillColor = UIColor.clear.cgColor
         
-        var angle = Float(Double.pi/2 + Double.pi)
+        var angle = model.angle270
         let centerPoint = CGPoint(x: radius, y: radius)
         let smallRadius = radius - (radius/20 + clockBorderLineWidth)
         
@@ -305,7 +308,7 @@ private class AMClockModel {
         layer.strokeColor = clockIndexColor.cgColor
         layer.fillColor = UIColor.clear.cgColor
         
-        var angle = Float(Double.pi/2 + Double.pi)
+        var angle = model.angle270
         let centerPoint = CGPoint(x: radius, y: radius)
         let smallRadius = radius - (radius/10 + clockBorderLineWidth)
         
@@ -318,14 +321,14 @@ private class AMClockModel {
             let point2 = CGPoint(x: centerPoint.x + smallRadius * CGFloat(cosf(angle)),
                                  y: centerPoint.y + smallRadius * CGFloat(sinf(angle)))
             path.addLine(to: point2)
-            angle += Float(Double.pi/6)
+            angle += model.angle30
         }
         layer.lineWidth = clockIndexWidth
         layer.path = path.cgPath
     }
     
     private func prepareTimeLabel() {
-        var angle = Float(Double.pi/2 + Double.pi)
+        var angle = model.angle270
         let centerPoint = CGPoint(x: radius, y: radius)
         var smallRadius = radius - (radius/10 + clockBorderLineWidth)
         let length = radius/4
@@ -353,7 +356,7 @@ private class AMClockModel {
             let point = CGPoint(x: centerPoint.x + smallRadius * CGFloat(cosf(angle)),
                                 y: centerPoint.y + smallRadius * CGFloat(sinf(angle)))
             label.center = point
-            angle += Float(Double.pi/6)
+            angle += model.angle30
         }
     }
     
@@ -369,7 +372,7 @@ private class AMClockModel {
         hourHandLayer.strokeColor = hourHandColor.cgColor
         hourHandLayer.fillColor = UIColor.clear.cgColor
         
-        let angle = Float(Double.pi/2 + Double.pi)
+        let angle = model.angle270
         
         let length = radius * 0.6
         let centerPoint = CGPoint(x: radius, y: radius)
@@ -396,7 +399,7 @@ private class AMClockModel {
         minuteHandLayer.strokeColor = minuteHandColor.cgColor
         minuteHandLayer.fillColor = UIColor.clear.cgColor
         
-        let angle = Float(Double.pi/2 + Double.pi)
+        let angle = model.angle270
         
         let length = radius * 0.8
         let centerPoint = CGPoint(x: radius, y: radius)
@@ -488,7 +491,7 @@ private class AMClockModel {
         let radian = model.calculateRadian(point: point, radius: radius)
         var angle = model.calculateHourAngle(radian: radian)
         let minuteInt = Int(model.minute(for: currentDate))
-        angle += (Float(minuteInt!)/60.0) * Float(Double.pi/6)
+        angle += (Float(minuteInt!)/60.0) * model.angle30
         endAngle = angle
         
         if startAngle == endAngle {
@@ -498,23 +501,21 @@ private class AMClockModel {
         var angleGap: Float = 0.0
         if startAngle > endAngle {
             let gap = startAngle - endAngle
-            let angle270 = Float(Double.pi/2) * 3
-            if gap > angle270 {
-                angleGap = (endAngle + Float(Double.pi*2)) - startAngle
+            if gap > model.angle270 {
+                angleGap = (endAngle + model.angle360) - startAngle
             } else {
                 angleGap = endAngle - startAngle
             }
         } else {
             let gap = endAngle - startAngle
-            let angle270 = Float(Double.pi/2) * 3
-            if gap > angle270 {
-                angleGap = ((startAngle + Float(Double.pi*2)) - endAngle) * -1
+            if gap > model.angle270 {
+                angleGap = ((startAngle + model.angle360) - endAngle) * -1
             } else {
                 angleGap = endAngle - startAngle
             }
         }
         
-        var degree = Int(angleGap*360 / Float(2*Double.pi))
+        var degree = Int(angleGap*360 / model.angle360)
         degree = (degree < 0) ? degree - 5 : degree + 5
         let hour: Int = degree/30
         
@@ -528,7 +529,7 @@ private class AMClockModel {
     
     private func editTimeMinute(point: CGPoint) {
         let radian = model.calculateRadian(point: point, radius: radius)
-        let minuteInt = Int((radian - Float(Double.pi + Double.pi/2)) / (Float(Double.pi * 2)/60))
+        let minuteInt = Int((radian - model.angle270) / (model.angle360 / 60))
         if minuteInt == Int(model.minute(for: currentDate)) {
             return
         }
@@ -544,15 +545,13 @@ private class AMClockModel {
         
         if endAngle < startAngle {
             let gap = startAngle - endAngle
-            let angle270 = Float(Double.pi/2) * 3
-            if gap > angle270 {
+            if gap > model.angle270 {
                 // case(through 12o'clock)
                 currentDate = currentDate.addingTimeInterval(60 * 60)// 1 hour ago
             }
         } else {
             let gap = endAngle - startAngle
-            let angle270 = Float(Double.pi/2) * 3
-            if gap > angle270 {
+            if gap > model.angle270 {
                 // case(through 12o'clock)
                 currentDate = currentDate.addingTimeInterval(-60 * 60)// 1 hour later
             }
@@ -567,7 +566,7 @@ private class AMClockModel {
     //MARK: - Draw Hand
     private func drawMinuteHandLayer(angle: Float) {
         if minuteHandImage != nil {
-            let rotation = angle - Float(Double.pi/2 + Double.pi)
+            let rotation = angle - model.angle270
             minuteHandImageView.transform = CGAffineTransform(rotationAngle: CGFloat(rotation))
             return
         }
@@ -596,7 +595,7 @@ private class AMClockModel {
             clockImageView.image = clockImage
             minuteHandImageView.image = minuteHandImage
             hourHandImageView.image = hourHandImage
-            let rotation = angle - Float(Double.pi/2 + Double.pi)
+            let rotation = angle - model.angle270
             hourHandImageView.transform = CGAffineTransform(rotationAngle: CGFloat(rotation))
             return
         }
