@@ -14,12 +14,6 @@ public enum AMCVTimeEditType{
     case minute
 }
 
-public enum AMCVDateFormat: String {
-    case hour = "HH"
-    case minute = "mm"
-    case time = "HH:mm"
-}
-
 public enum AMCVClockType {
     case none
     case arabic
@@ -41,11 +35,102 @@ public protocol AMClockViewDelegate: AnyObject {
     func clockView(_ clockView: AMClockView, didChangeDate date: Date)
 }
 
+private class AMClockModel {
+    
+    enum AMCVDateFormat: String {
+        case hour = "HH"
+        case minute = "mm"
+        case time = "HH:mm"
+    }
+
+    let dateFormatter: DateFormatter = {
+        var df = DateFormatter()
+        df.locale = Locale(identifier: "ja_JP")
+        return df
+    }()
+    
+    //MARK: - Calculate
+    func calculateHourAngle(radian: Float) -> Float {
+        let hour = (radian - Float(Double.pi + Double.pi/2)) / (Float(Double.pi * 2)/12)
+        let angle = (Float(Double.pi * 2)/12) * Float(Int(hour))
+        return angle + Float(Double.pi + Double.pi/2)
+    }
+    
+    func caluculateMinuteAngle(radian: Float) -> Float {
+        let minute = (radian - Float(Double.pi + Double.pi/2)) / (Float(Double.pi * 2)/60)
+        let angle = (Float(Double.pi * 2)/60) * Float(Int(minute))
+        return angle + Float(Double.pi + Double.pi/2)
+    }
+    
+    func calculateRadian(point: CGPoint, radius: CGFloat) -> Float {
+        // origin(view's center)
+        let centerPoint = CGPoint(x: radius, y: radius)
+        
+        // Find difference in coordinates.Since the upper side of the screen is the Y coordinate +, the Y coordinate changes the sign.
+        let x = Float(point.x - centerPoint.x)
+        let y = -Float(point.y - centerPoint.y)
+       
+        var radian = atan2f(y, x)
+        
+        // To correct radian(3/2π~7/2π: 0 o'clock = 3/2π)
+        radian = radian * -1
+        if radian < 0 {
+            radian += Float(Double.pi*2)
+        }
+        
+        if radian >= 0 && radian < Float(Double.pi + Double.pi/2) {
+            radian += Float(Double.pi*2)
+        }
+        return radian
+    }
+    
+    func caluculateAngle(minute: String) -> Float {
+        let angle = (Float(Double.pi*2)/60) * Float(minute)!
+        return angle + Float(Double.pi + Double.pi/2)
+    }
+    
+    func caluculateAngle(hour: String) -> Float {
+        var hourInt = Int(hour)!
+        if hourInt > 12 {
+            hourInt -= 12
+        }
+        
+        let angle: Float = (Float(Double.pi*2)/12) * Float(hourInt)
+        return angle + Float(Double.pi + Double.pi/2)
+    }
+    
+    func compensationHourAngle(date: Date) -> Float {
+        let hourAngle = caluculateAngle(hour: hour(for: date))
+        let minuteInt = Int(minute(for: date))!
+        return hourAngle + ((Float(minuteInt)/60.0) * Float(Double.pi/6))
+    }
+    
+    func adjustFont(rect: CGRect) -> UIFont {
+        let length = (rect.width > rect.height) ? rect.height : rect.width
+        return .systemFont(ofSize: length * 0.8)
+    }
+    
+    func minute(for date: Date) -> String {
+        dateFormatter.dateFormat = AMCVDateFormat.minute.rawValue
+        return dateFormatter.string(from: date)
+    }
+    
+    func hour(for date: Date) -> String {
+        dateFormatter.dateFormat = AMCVDateFormat.hour.rawValue
+        return dateFormatter.string(from: date)
+    }
+    
+    func time(for date: Date) -> String {
+        dateFormatter.dateFormat = AMCVDateFormat.time.rawValue
+        return dateFormatter.string(from: date)
+    }
+}
+
 @IBDesignable public class AMClockView: UIView {
     
     public weak var delegate: AMClockViewDelegate?
     /// watch dials
-    public var clockType = AMCVClockType.arabic
+    public var clockType: AMCVClockType = .arabic
     @IBInspectable public var clockBorderLineWidth: CGFloat = 5.0
     @IBInspectable public var smallClockIndexWidth: CGFloat = 1.0
     @IBInspectable public var clockIndexWidth: CGFloat = 2.0
@@ -86,37 +171,34 @@ public protocol AMClockViewDelegate: AnyObject {
     private let minuteHandImageView = UIImageView()
     private let hourHandImageView = UIImageView()
     private let selectedTimeLabel = UILabel()
-    private let dateFormatter = DateFormatter()
     private let calendar = Calendar(identifier: .gregorian)
+    private let model = AMClockModel()
     
     private var drawLayer: CAShapeLayer?
     private var hourHandLayer: CAShapeLayer?
     private var minuteHandLayer: CAShapeLayer?
     private var panHourLayer: CAShapeLayer?
     private var panMinuteLayer: CAShapeLayer?
-    private var editType = AMCVTimeEditType.none
+    private var editType: AMCVTimeEditType = .none
     private var startAngle: Float = 0.0
     private var endAngle: Float = 0.0
     private var currentDate = Date()
-    
+    private var radius: CGFloat {
+        return clockView.frame.width/2
+    }
+
     //MARK: - Initialize
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder:aDecoder)
-        initView()
     }
     
     override public init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .clear
-        initView()
     }
     
     convenience init() {
         self.init(frame: .zero)
-    }
-    
-    private func initView() {
-        dateFormatter.locale = Locale(identifier: "ja_JP")
     }
     
     override public func draw(_ rect: CGRect) {
@@ -125,7 +207,7 @@ public protocol AMClockViewDelegate: AnyObject {
     
     //MARK: - Prepare
     private func prepareClockView() {
-        var length: CGFloat = (frame.width < frame.height) ? frame.width : frame.height
+        var length = (frame.width < frame.height) ? frame.width : frame.height
         length -= clockSpace*2
         clockView.frame = CGRect(x: frame.width/2 - length/2,
                                  y: frame.height/2 - length/2,
@@ -149,14 +231,13 @@ public protocol AMClockViewDelegate: AnyObject {
     }
     
     private func prepareSelectedTimeLabel() {
-        let radius: CGFloat = clockView.frame.width/2
         let centerPoint = CGPoint(x: radius, y: radius)
         selectedTimeLabel.frame = CGRect(x: centerPoint.x - (radius/2)/2,
                                          y: centerPoint.y - radius/3,
                                          width: radius/2,
                                          height: radius/3)
         clockView.addSubview(selectedTimeLabel)
-        selectedTimeLabel.font = adjustFont(rect: selectedTimeLabel.frame)
+        selectedTimeLabel.font = model.adjustFont(rect: selectedTimeLabel.frame)
         selectedTimeLabel.adjustsFontSizeToFitWidth = true
         selectedTimeLabel.textColor = selectedTimeLabelTextColor
         selectedTimeLabel.textAlignment = .center
@@ -171,7 +252,7 @@ public protocol AMClockViewDelegate: AnyObject {
         
         drawLayer.frame = clockView.bounds
         clockView.layer.addSublayer(drawLayer)
-        drawLayer.cornerRadius = clockView.frame.width/2
+        drawLayer.cornerRadius = radius
         drawLayer.masksToBounds = true
         
         if clockImage == nil {
@@ -191,10 +272,9 @@ public protocol AMClockViewDelegate: AnyObject {
         layer.strokeColor = smallClockIndexColor.cgColor
         layer.fillColor = UIColor.clear.cgColor
         
-        var angle: Float = Float(Double.pi/2 + Double.pi)
-        let radius: CGFloat = clockView.frame.width/2
+        var angle = Float(Double.pi/2 + Double.pi)
         let centerPoint = CGPoint(x: radius, y: radius)
-        let smallRadius: CGFloat = radius - (radius/20 + clockBorderLineWidth)
+        let smallRadius = radius - (radius/20 + clockBorderLineWidth)
         
         let path = UIBezierPath()
         // draw line (from center to out)
@@ -225,10 +305,9 @@ public protocol AMClockViewDelegate: AnyObject {
         layer.strokeColor = clockIndexColor.cgColor
         layer.fillColor = UIColor.clear.cgColor
         
-        var angle: Float = Float(Double.pi/2 + Double.pi)
-        let radius: CGFloat = clockView.frame.width/2
+        var angle = Float(Double.pi/2 + Double.pi)
         let centerPoint = CGPoint(x: radius, y: radius)
-        let smallRadius: CGFloat = radius - (radius/10 + clockBorderLineWidth)
+        let smallRadius = radius - (radius/10 + clockBorderLineWidth)
         
         let path = UIBezierPath()
         // draw line (from center to out)
@@ -246,11 +325,10 @@ public protocol AMClockViewDelegate: AnyObject {
     }
     
     private func prepareTimeLabel() {
-        var angle: Float = Float(Double.pi/2 + Double.pi)
-        let radius: CGFloat = clockView.frame.width/2
+        var angle = Float(Double.pi/2 + Double.pi)
         let centerPoint = CGPoint(x: radius, y: radius)
-        var smallRadius: CGFloat = radius - (radius/10 + clockBorderLineWidth)
-        let length: CGFloat = radius/4
+        var smallRadius = radius - (radius/10 + clockBorderLineWidth)
+        let length = radius/4
         smallRadius -= length/2
         
         // draw line (from center to out)
@@ -270,7 +348,7 @@ public protocol AMClockViewDelegate: AnyObject {
             case .roman:
                 label.text = ""
             }
-            label.font = adjustFont(rect: label.frame)
+            label.font = model.adjustFont(rect: label.frame)
             clockView.addSubview(label)
             let point = CGPoint(x: centerPoint.x + smallRadius * CGFloat(cosf(angle)),
                                 y: centerPoint.y + smallRadius * CGFloat(sinf(angle)))
@@ -291,10 +369,9 @@ public protocol AMClockViewDelegate: AnyObject {
         hourHandLayer.strokeColor = hourHandColor.cgColor
         hourHandLayer.fillColor = UIColor.clear.cgColor
         
-        let angle: Float = Float(Double.pi/2 + Double.pi)
+        let angle = Float(Double.pi/2 + Double.pi)
         
-        let radius: CGFloat = clockView.frame.width/2
-        let length: CGFloat = radius * 0.6
+        let length = radius * 0.6
         let centerPoint = CGPoint(x: radius, y: radius)
         
         let path = UIBezierPath()
@@ -319,10 +396,9 @@ public protocol AMClockViewDelegate: AnyObject {
         minuteHandLayer.strokeColor = minuteHandColor.cgColor
         minuteHandLayer.fillColor = UIColor.clear.cgColor
         
-        let angle: Float = Float(Double.pi/2 + Double.pi)
+        let angle = Float(Double.pi/2 + Double.pi)
         
-        let radius: CGFloat = clockView.frame.width/2
-        let length: CGFloat = radius * 0.8
+        let length = radius * 0.8
         let centerPoint = CGPoint(x: radius, y: radius)
         
         let path = UIBezierPath()
@@ -346,9 +422,8 @@ public protocol AMClockViewDelegate: AnyObject {
         
         let pan = UIPanGestureRecognizer(target: self, action: #selector(self.panAction(gesture:)))
         clockView.addGestureRecognizer(pan)
-        let radius: CGFloat = clockView.frame.width/2
         let centerPoint = CGPoint(x: radius, y: radius)
-        let smallRadius: CGFloat = radius/2
+        let smallRadius = radius/2
         
         let path1 = UIBezierPath(ovalIn: CGRect(x: centerPoint.x - radius,
                                                 y: centerPoint.y - radius,
@@ -383,11 +458,10 @@ public protocol AMClockViewDelegate: AnyObject {
             /// Set edit mode
             if UIBezierPath(cgPath: panHourLayer.path!).contains(point) {
                 editType = .hour
-                startAngle = compensationHourAngle()
+                startAngle = model.compensationHourAngle(date: currentDate)
             } else if UIBezierPath(cgPath: panMinuteLayer.path!).contains(point) {
                 editType = .minute
-                dateFormatter.dateFormat = AMCVDateFormat.minute.rawValue
-                startAngle = caluculateAngle(minute: dateFormatter.string(from: currentDate))
+                startAngle = model.caluculateAngle(minute: model.minute(for: currentDate))
             } else {
                 editType = .none
             }
@@ -397,11 +471,10 @@ public protocol AMClockViewDelegate: AnyObject {
                 /// Set edit mode
                 if UIBezierPath(cgPath: panHourLayer.path!).contains(point) {
                     editType = .hour
-                    startAngle = compensationHourAngle()
+                    startAngle = model.compensationHourAngle(date: currentDate)
                 } else if UIBezierPath(cgPath: panMinuteLayer.path!).contains(point) {
                     editType = .minute
-                    dateFormatter.dateFormat = AMCVDateFormat.minute.rawValue
-                    startAngle = caluculateAngle(minute: dateFormatter.string(from: currentDate))
+                    startAngle = model.caluculateAngle(minute: model.minute(for: currentDate))
                 }
             case .hour:
                 editTimeHour(point: point)
@@ -412,11 +485,10 @@ public protocol AMClockViewDelegate: AnyObject {
     }
     
     private func editTimeHour(point: CGPoint) {
-        let radian: Float = calculateRadian(point: point)
-        var angle: Float = calculateHourAngle(radian: radian)
-        dateFormatter.dateFormat = AMCVDateFormat.minute.rawValue
-        let minute = Int(dateFormatter.string(from: currentDate))
-        angle += (Float(minute!)/60.0) * Float(Double.pi/6)
+        let radian = model.calculateRadian(point: point, radius: radius)
+        var angle = model.calculateHourAngle(radian: radian)
+        let minuteInt = Int(model.minute(for: currentDate))
+        angle += (Float(minuteInt!)/60.0) * Float(Double.pi/6)
         endAngle = angle
         
         if startAngle == endAngle {
@@ -442,7 +514,7 @@ public protocol AMClockViewDelegate: AnyObject {
             }
         }
         
-        var degree: Int = Int(angleGap*360 / Float(2*Double.pi))
+        var degree = Int(angleGap*360 / Float(2*Double.pi))
         degree = (degree < 0) ? degree - 5 : degree + 5
         let hour: Int = degree/30
         
@@ -455,20 +527,19 @@ public protocol AMClockViewDelegate: AnyObject {
     }
     
     private func editTimeMinute(point: CGPoint) {
-        let radian: Float = calculateRadian(point: point)
-        let minute: Int = Int((radian - Float(Double.pi + Double.pi/2)) / (Float(Double.pi * 2)/60))
-        dateFormatter.dateFormat = AMCVDateFormat.minute.rawValue
-        if minute == Int(dateFormatter.string(from: currentDate)) {
+        let radian = model.calculateRadian(point: point, radius: radius)
+        let minuteInt = Int((radian - Float(Double.pi + Double.pi/2)) / (Float(Double.pi * 2)/60))
+        if minuteInt == Int(model.minute(for: currentDate)) {
             return
         }
         
-        let angle: Float = caluculateMinuteAngle(radian: radian)
+        let angle = model.caluculateMinuteAngle(radian: radian)
         endAngle = angle
         drawMinuteHandLayer(angle: angle)
         
         var components = calendar.dateComponents([.year, .month, .day, .hour, .minute],
                                                  from: currentDate)
-        components.minute = minute
+        components.minute = minuteInt
         currentDate = calendar.date(from: components)!
         
         if endAngle < startAngle {
@@ -487,76 +558,10 @@ public protocol AMClockViewDelegate: AnyObject {
             }
         }
         
-        drawHourHandLayer(angle: compensationHourAngle())
+        drawHourHandLayer(angle: model.compensationHourAngle(date: currentDate))
         changedTime()
         
         startAngle = angle
-    }
-    
-    //MARK: - Calculate
-    private func calculateHourAngle(radian: Float) -> Float {
-        let hour = (radian - Float(Double.pi + Double.pi/2)) / (Float(Double.pi * 2)/12)
-        let angle: Float = (Float(Double.pi * 2)/12) * Float(Int(hour))
-        return  angle + Float(Double.pi + Double.pi/2)
-    }
-    
-    private func caluculateMinuteAngle(radian: Float) -> Float {
-        let minute = (radian - Float(Double.pi + Double.pi/2)) / (Float(Double.pi * 2)/60)
-        let angle: Float = (Float(Double.pi * 2)/60) * Float(Int(minute))
-        return  angle + Float(Double.pi + Double.pi/2)
-    }
-    
-    private func calculateRadian(point: CGPoint) -> Float {
-        // origin(view's center)
-        let radius: CGFloat = clockView.frame.width/2
-        let centerPoint = CGPoint(x: radius, y: radius)
-        
-        // Find difference in coordinates.Since the upper side of the screen is the Y coordinate +, the Y coordinate changes the sign.
-        let x: Float = Float(point.x - centerPoint.x)
-        let y: Float = -Float(point.y - centerPoint.y)
-       
-        var radian: Float = atan2f(y, x)
-        
-        // To correct radian(3/2π~7/2π: 0 o'clock = 3/2π)
-        radian = radian * -1
-        if radian < 0 {
-            radian += Float(Double.pi*2)
-        }
-        
-        if radian >= 0 && radian < Float(Double.pi + Double.pi/2) {
-            radian += Float(Double.pi*2)
-        }
-        return radian
-    }
-    
-    private func caluculateAngle(minute: String) -> Float {
-        let angle: Float = (Float(Double.pi*2)/60) * Float(minute)!
-        return  angle + Float(Double.pi + Double.pi/2)
-    }
-    
-    private func caluculateAngle(hour: String) -> Float {
-        var hourInt: Int = Int(hour)!
-        if hourInt > 12 {
-            hourInt -= 12
-        }
-        
-        let angle: Float = (Float(Double.pi*2)/12) * Float(hourInt)
-        return  angle + Float(Double.pi + Double.pi/2)
-    }
-    
-    private func compensationHourAngle() -> Float {
-        dateFormatter.dateFormat = AMCVDateFormat.hour.rawValue
-        var hourAngle: Float = caluculateAngle(hour: dateFormatter.string(from: currentDate))
-        dateFormatter.dateFormat = AMCVDateFormat.minute.rawValue
-        let minute: Int = Int(dateFormatter.string(from: currentDate))!
-        hourAngle += (Float(minute)/60.0) * Float(Double.pi/6)
-        return hourAngle
-    }
-    
-    private func adjustFont(rect: CGRect) -> UIFont {
-        let length: CGFloat = (rect.width > rect.height) ? rect.height : rect.width
-        let font = UIFont.systemFont(ofSize: length * 0.8)
-        return font
     }
     
     //MARK: - Draw Hand
@@ -571,8 +576,7 @@ public protocol AMClockViewDelegate: AnyObject {
             return
         }
         
-        let radius: CGFloat = clockView.frame.width/2
-        let length: CGFloat = radius * 0.8
+        let length = radius * 0.8
         let centerPoint = CGPoint(x: radius, y: radius)
         
         let path = UIBezierPath()
@@ -601,8 +605,7 @@ public protocol AMClockViewDelegate: AnyObject {
             return
         }
         
-        let radius: CGFloat = clockView.frame.width/2
-        let length: CGFloat = radius * 0.6
+        let length = radius * 0.6
         let centerPoint = CGPoint(x: radius, y: radius)
         
         let path = UIBezierPath()
@@ -664,19 +667,14 @@ public protocol AMClockViewDelegate: AnyObject {
     }
     
     private func changedTime() {
-        dateFormatter.dateFormat = AMCVDateFormat.time.rawValue
-        selectedTimeLabel.text = dateFormatter.string(from: currentDate)
+        selectedTimeLabel.text = model.time(for: currentDate)
         delegate?.clockView(self, didChangeDate: currentDate)
     }
     
     public func redrawClock() {
         relodClock()
-        
-        dateFormatter.dateFormat = AMCVDateFormat.minute.rawValue
-        drawMinuteHandLayer(angle: caluculateAngle(minute: dateFormatter.string(from: currentDate)))
-        drawHourHandLayer(angle: compensationHourAngle())
-        
-        dateFormatter.dateFormat = AMCVDateFormat.time.rawValue
-        selectedTimeLabel.text = dateFormatter.string(from: currentDate)
+        drawMinuteHandLayer(angle: model.caluculateAngle(minute: model.minute(for: currentDate)))
+        drawHourHandLayer(angle: model.compensationHourAngle(date: currentDate))
+        selectedTimeLabel.text = model.time(for: currentDate)
     }
 }
