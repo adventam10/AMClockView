@@ -229,7 +229,6 @@ private class AMClockModel {
         }
     }
     
-    private let clockSpace: CGFloat = 10
     private let clockView = UIView()
     private let clockImageView = UIImageView()
     private let minuteHandImageView = UIImageView()
@@ -275,8 +274,7 @@ private class AMClockModel {
     
     //MARK: - Prepare View
     private func prepareClockView() {
-        var length = (frame.width < frame.height) ? frame.width : frame.height
-        length -= clockSpace*2
+        let length = (frame.width < frame.height) ? frame.width : frame.height
         clockView.frame = CGRect(x: frame.width/2 - length/2,
                                  y: frame.height/2 - length/2,
                                  width: length, height: length)
