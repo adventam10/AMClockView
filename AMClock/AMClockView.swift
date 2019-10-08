@@ -8,12 +8,6 @@
 
 import UIKit
 
-public enum AMCVTimeEditType{
-    case none
-    case hour
-    case minute
-}
-
 public enum AMCVClockType {
     case none
     case arabic
@@ -55,29 +49,115 @@ private class AMClockModel {
         case time = "HH:mm"
     }
     
-    let dateFormatter: DateFormatter = {
+    enum AMCVTimeEditType {
+        case none
+        case hour
+        case minute
+    }
+    
+    var editType: AMCVTimeEditType = .none
+    var startAngle: Float = 0.0
+    var endAngle: Float = 0.0
+    var currentDate = Date()
+    var currentHourAngle: Float {
+        return calculateAngle(hour: currentHour)
+    }
+    var currentMinuteAngle: Float {
+        let angle = (angle360 / 60) * Float(currentMinute)
+        return angle + angle270
+    }
+    var currentHour: Int {
+        return Int(formattedTime(.hour))!
+    }
+    var currentMinute: Int {
+        return Int(formattedTime(.minute))!
+    }
+    
+    let angle30 = Float(Double.pi / 6)
+    let angle270 = Float(Double.pi + Double.pi/2)
+    private let angle360 = Float(Double.pi * 2)
+    private let calendar = Calendar(identifier: .gregorian)
+    private let dateFormatter: DateFormatter = {
         var df = DateFormatter()
         df.locale = Locale(identifier: "ja_JP")
         return df
     }()
-    let angle270 = Float(Double.pi + Double.pi/2)
-    let angle360 = Float(Double.pi * 2)
-    let angle30 = Float(Double.pi / 6)
     
-    //MARK: - Calculate
-    func calculateHourAngle(radian: Float) -> Float {
-        let hour = (radian - angle270) / (angle360 / 12)
-        let angle = (angle360 / 12) * Float(Int(hour))
-        return angle + angle270
+    func adjustFont(rect: CGRect) -> UIFont {
+        let length = (rect.width > rect.height) ? rect.height : rect.width
+        return .systemFont(ofSize: length * 0.8)
     }
     
-    func caluculateMinuteAngle(radian: Float) -> Float {
-        let minute = (radian - angle270) / (angle360 / 60)
-        let angle = (angle360 / 60) * Float(Int(minute))
-        return angle + angle270
+    func formattedTime(_ format: AMCVDateFormat) -> String {
+        dateFormatter.dateFormat = format.rawValue
+        return dateFormatter.string(from: currentDate)
     }
     
-    func calculateRadian(point: CGPoint, radius: CGFloat) -> Float {
+    func updateCurrentDate(minute: Int) {
+        var components = calendar.dateComponents([.year, .month, .day, .hour, .minute],
+                                                 from: currentDate)
+        components.minute = minute
+        currentDate = calendar.date(from: components)!
+    }
+    
+    func appendHour(_ hour: Int) {
+        currentDate = currentDate.addingTimeInterval(60 * 60 * Double(hour))
+    }
+        
+    func calculateHourAngle(point: CGPoint, radius: CGFloat) -> Float {
+        let radian = calculateRadian(point: point, radius: radius)
+        let hour = Int((radian - angle270) / (angle360 / 12))
+        return calculateAngle(hour: hour)
+    }
+    
+    func calculateMinute(point: CGPoint, radius: CGFloat) -> Int {
+        let radian = calculateRadian(point: point, radius: radius)
+        return Int((radian - angle270) / (angle360 / 60))
+    }
+    
+    func revisedByAcrossHour(startAngle: Float, endAngle: Float) {
+       if endAngle < startAngle {
+           let gap = startAngle - endAngle
+           if gap > angle270 {
+               // case(through 12o'clock)
+               // 1 hour ago
+               appendHour(1)
+           }
+       } else {
+           let gap = endAngle - startAngle
+           if gap > angle270 {
+               // case(through 12o'clock)
+               // 1 hour later
+               appendHour(-1)
+           }
+       }
+    }
+    
+    func calculateElapsedTime(startAngle: Float, endAngle: Float) -> Int {
+        var angleGap: Float = 0.0
+        if startAngle > endAngle {
+            let gap = startAngle - endAngle
+            if gap > angle270 {
+                angleGap = (endAngle + angle360) - startAngle
+            } else {
+                angleGap = endAngle - startAngle
+            }
+        } else {
+            let gap = endAngle - startAngle
+            if gap > angle270 {
+                angleGap = ((startAngle + angle360) - endAngle) * -1
+            } else {
+                angleGap = endAngle - startAngle
+            }
+        }
+        
+        var degree = Int(angleGap*360 / angle360)
+        degree = (degree < 0) ? degree - 5 : degree + 5
+        let hour: Int = degree/30
+        return hour
+    }
+    
+    private func calculateRadian(point: CGPoint, radius: CGFloat) -> Float {
         // origin(view's center)
         let centerPoint = CGPoint(x: radius, y: radius)
         
@@ -99,45 +179,12 @@ private class AMClockModel {
         return radian
     }
     
-    func caluculateAngle(minute: String) -> Float {
-        let angle = (angle360 / 60) * Float(minute)!
-        return angle + angle270
-    }
-    
-    func caluculateAngle(hour: String) -> Float {
-        var hourInt = Int(hour)!
-        if hourInt > 12 {
-            hourInt -= 12
-        }
-        
+    private func calculateAngle(hour: Int) -> Float {
+        let hourInt = hour > 12 ? hour - 12 : hour
         let angle = (angle360 / 12) * Float(hourInt)
-        return angle + angle270
-    }
-    
-    func compensationHourAngle(date: Date) -> Float {
-        let hourAngle = caluculateAngle(hour: hour(for: date))
-        let minuteInt = Int(minute(for: date))!
-        return hourAngle + ((Float(minuteInt)/60.0) * angle30)
-    }
-    
-    func adjustFont(rect: CGRect) -> UIFont {
-        let length = (rect.width > rect.height) ? rect.height : rect.width
-        return .systemFont(ofSize: length * 0.8)
-    }
-    
-    func minute(for date: Date) -> String {
-        dateFormatter.dateFormat = AMCVDateFormat.minute.rawValue
-        return dateFormatter.string(from: date)
-    }
-    
-    func hour(for date: Date) -> String {
-        dateFormatter.dateFormat = AMCVDateFormat.hour.rawValue
-        return dateFormatter.string(from: date)
-    }
-    
-    func time(for date: Date) -> String {
-        dateFormatter.dateFormat = AMCVDateFormat.time.rawValue
-        return dateFormatter.string(from: date)
+        let hourAngle = angle + angle270
+        /// revise by minute
+        return hourAngle + ((Float(currentMinute)/60.0) * angle30)
     }
 }
 
@@ -171,7 +218,7 @@ private class AMClockModel {
     public var clockType: AMCVClockType = .arabic
     public var selectedDate: Date? {
         didSet{
-            currentDate = selectedDate ?? Date()
+            model.currentDate = selectedDate ?? Date()
             redrawClock()
         }
     }
@@ -188,7 +235,6 @@ private class AMClockModel {
     private let minuteHandImageView = UIImageView()
     private let hourHandImageView = UIImageView()
     private let selectedTimeLabel = UILabel()
-    private let calendar = Calendar(identifier: .gregorian)
     private let model = AMClockModel()
     
     private var drawLayer: CAShapeLayer?
@@ -196,10 +242,6 @@ private class AMClockModel {
     private var minuteHandLayer: CAShapeLayer?
     private var panHourLayer: CAShapeLayer?
     private var panMinuteLayer: CAShapeLayer?
-    private var editType: AMCVTimeEditType = .none
-    private var startAngle: Float = 0.0
-    private var endAngle: Float = 0.0
-    private var currentDate = Date()
     private var radius: CGFloat {
         return clockView.frame.width/2
     }
@@ -427,24 +469,24 @@ private class AMClockModel {
         if gesture.state == .began {
             /// Set edit mode
             if UIBezierPath(cgPath: panHourLayer.path!).contains(point) {
-                editType = .hour
-                startAngle = model.compensationHourAngle(date: currentDate)
+                model.editType = .hour
+                model.startAngle = model.currentHourAngle
             } else if UIBezierPath(cgPath: panMinuteLayer.path!).contains(point) {
-                editType = .minute
-                startAngle = model.caluculateAngle(minute: model.minute(for: currentDate))
+                model.editType = .minute
+                model.startAngle = model.currentMinuteAngle
             } else {
-                editType = .none
+                model.editType = .none
             }
         } else {
-            switch editType {
+            switch model.editType {
             case .none:
                 /// Set edit mode
                 if UIBezierPath(cgPath: panHourLayer.path!).contains(point) {
-                    editType = .hour
-                    startAngle = model.compensationHourAngle(date: currentDate)
+                    model.editType = .hour
+                    model.startAngle = model.currentHourAngle
                 } else if UIBezierPath(cgPath: panMinuteLayer.path!).contains(point) {
-                    editType = .minute
-                    startAngle = model.caluculateAngle(minute: model.minute(for: currentDate))
+                    model.editType = .minute
+                    model.startAngle = model.currentMinuteAngle
                 }
             case .hour:
                 editTimeHour(point: point)
@@ -455,76 +497,34 @@ private class AMClockModel {
     }
     
     private func editTimeHour(point: CGPoint) {
-        let radian = model.calculateRadian(point: point, radius: radius)
-        var angle = model.calculateHourAngle(radian: radian)
-        let minuteInt = Int(model.minute(for: currentDate))
-        angle += (Float(minuteInt!)/60.0) * model.angle30
-        endAngle = angle
-        
-        if startAngle == endAngle {
+        model.endAngle = model.calculateHourAngle(point: point, radius: radius)
+        if model.startAngle == model.endAngle {
             return
         }
         
-        var angleGap: Float = 0.0
-        if startAngle > endAngle {
-            let gap = startAngle - endAngle
-            if gap > model.angle270 {
-                angleGap = (endAngle + model.angle360) - startAngle
-            } else {
-                angleGap = endAngle - startAngle
-            }
-        } else {
-            let gap = endAngle - startAngle
-            if gap > model.angle270 {
-                angleGap = ((startAngle + model.angle360) - endAngle) * -1
-            } else {
-                angleGap = endAngle - startAngle
-            }
-        }
+        let hour = model.calculateElapsedTime(startAngle: model.startAngle,
+                                              endAngle: model.endAngle)
+        model.appendHour(hour)
         
-        var degree = Int(angleGap*360 / model.angle360)
-        degree = (degree < 0) ? degree - 5 : degree + 5
-        let hour: Int = degree/30
-        
-        drawHourHandLayer(angle: angle)
-        currentDate = currentDate.addingTimeInterval(60 * 60 * TimeInterval(hour))
+        drawHourHandLayer(angle: model.currentHourAngle)
         changedTime()
-        startAngle = angle
+        model.startAngle = model.endAngle
     }
     
     private func editTimeMinute(point: CGPoint) {
-        let radian = model.calculateRadian(point: point, radius: radius)
-        let minuteInt = Int((radian - model.angle270) / (model.angle360 / 60))
-        if minuteInt == Int(model.minute(for: currentDate)) {
+        let minuteInt = model.calculateMinute(point: point, radius: radius)
+        if minuteInt == model.currentMinute {
             return
         }
         
-        let angle = model.caluculateMinuteAngle(radian: radian)
-        endAngle = angle
-        drawMinuteHandLayer(angle: angle)
+        model.updateCurrentDate(minute: minuteInt)
+        model.endAngle = model.currentMinuteAngle
+        model.revisedByAcrossHour(startAngle: model.startAngle, endAngle: model.endAngle)
         
-        var components = calendar.dateComponents([.year, .month, .day, .hour, .minute],
-                                                 from: currentDate)
-        components.minute = minuteInt
-        currentDate = calendar.date(from: components)!
-        
-        if endAngle < startAngle {
-            let gap = startAngle - endAngle
-            if gap > model.angle270 {
-                // case(through 12o'clock)
-                currentDate = currentDate.addingTimeInterval(60 * 60)// 1 hour ago
-            }
-        } else {
-            let gap = endAngle - startAngle
-            if gap > model.angle270 {
-                // case(through 12o'clock)
-                currentDate = currentDate.addingTimeInterval(-60 * 60)// 1 hour later
-            }
-        }
-        
-        drawHourHandLayer(angle: model.compensationHourAngle(date: currentDate))
+        drawMinuteHandLayer(angle: model.currentMinuteAngle)
+        drawHourHandLayer(angle: model.currentHourAngle)
         changedTime()
-        startAngle = angle
+        model.startAngle = model.endAngle
     }
     
     //MARK: - Draw Hand
@@ -619,14 +619,14 @@ private class AMClockModel {
     }
     
     private func changedTime() {
-        selectedTimeLabel.text = model.time(for: currentDate)
-        delegate?.clockView(self, didChangeDate: currentDate)
+        selectedTimeLabel.text = model.formattedTime(.time)
+        delegate?.clockView(self, didChangeDate: model.currentDate)
     }
     
     public func redrawClock() {
         relodClock()
-        drawMinuteHandLayer(angle: model.caluculateAngle(minute: model.minute(for: currentDate)))
-        drawHourHandLayer(angle: model.compensationHourAngle(date: currentDate))
-        selectedTimeLabel.text = model.time(for: currentDate)
+        drawMinuteHandLayer(angle: model.currentMinuteAngle)
+        drawHourHandLayer(angle: model.currentHourAngle)
+        selectedTimeLabel.text = model.formattedTime(.time)
     }
 }
