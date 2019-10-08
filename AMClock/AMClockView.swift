@@ -11,7 +11,6 @@ import UIKit
 public enum AMCVClockType {
     case none
     case arabic
-    case roman
     
     var times: [String] {
         switch self {
@@ -19,9 +18,6 @@ public enum AMCVClockType {
             return []
         case .arabic:
             return ["12", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"]
-        case .roman:
-            return []
-//            return ["Ⅻ", "Ⅰ", "Ⅱ", "Ⅲ", "Ⅳ", "Ⅴ", "Ⅵ", "Ⅶ", "Ⅷ", "Ⅸ", "Ⅹ", "Ⅺ"]
         }
     }
     
@@ -31,8 +27,6 @@ public enum AMCVClockType {
             return ""
         case .arabic:
             return times[index]
-        case .roman:
-            return ""
         }
     }
 }
