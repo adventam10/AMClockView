@@ -17,13 +17,13 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Mbx-o1-hWY">
-                                <rect key="frame" x="72" y="101" width="231" height="465"/>
+                                <rect key="frame" x="26.5" y="8" width="322" height="651"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="VP2-3N-IF8">
-                                        <rect key="frame" x="0.0" y="0.0" width="231" height="107.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="322" height="175.5"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ao0-Qu-CSY" customClass="AMClockView" customModule="SampleAMClock" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="107.5" height="107.5"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="176" height="175.5"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" relation="lessThanOrEqual" constant="200" id="6tQ-rC-3ci"/>
@@ -31,7 +31,7 @@
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bBJ-GZ-F0k" customClass="AMClockView" customModule="SampleAMClock" customModuleProvider="target">
-                                                <rect key="frame" x="123.5" y="0.0" width="107.5" height="107.5"/>
+                                                <rect key="frame" x="192" y="23" width="130" height="130"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" relation="lessThanOrEqual" constant="130" id="fZt-NT-N5u"/>
@@ -66,8 +66,8 @@
                                             </view>
                                         </subviews>
                                     </stackView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rRy-az-g8w">
-                                        <rect key="frame" x="0.0" y="115.5" width="231" height="30"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rRy-az-g8w">
+                                        <rect key="frame" x="0.0" y="183.5" width="322" height="30"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="30" id="CcX-7l-taB"/>
                                         </constraints>
@@ -76,12 +76,13 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="gHL-Kb-hfd">
-                                        <rect key="frame" x="0.0" y="153.5" width="231" height="72.5"/>
+                                        <rect key="frame" x="0.0" y="221.5" width="322" height="100"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MMl-oF-P74" customClass="AMClockView" customModule="SampleAMClock" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="72.5" height="72.5"/>
+                                                <rect key="frame" x="0.0" y="2.5" width="95" height="95"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
+                                                    <constraint firstAttribute="width" priority="750" constant="110" id="90Y-Oo-5nM"/>
                                                     <constraint firstAttribute="width" relation="lessThanOrEqual" constant="110" id="Jga-W6-fd0"/>
                                                     <constraint firstAttribute="width" secondItem="MMl-oF-P74" secondAttribute="height" multiplier="1:1" id="kg9-ss-5uC"/>
                                                 </constraints>
@@ -94,11 +95,12 @@
                                                 </userDefinedRuntimeAttributes>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oZW-jw-THB" customClass="AMClockView" customModule="SampleAMClock" customModuleProvider="target">
-                                                <rect key="frame" x="88.5" y="9.5" width="54" height="54"/>
+                                                <rect key="frame" x="111" y="0.0" width="100" height="100"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" relation="lessThanOrEqual" constant="100" id="2gx-kF-eHo"/>
                                                     <constraint firstAttribute="width" secondItem="oZW-jw-THB" secondAttribute="height" multiplier="1:1" id="jEO-zA-icJ"/>
+                                                    <constraint firstAttribute="width" priority="750" constant="100" id="jJX-oq-5cr"/>
                                                 </constraints>
                                                 <userDefinedRuntimeAttributes>
                                                     <userDefinedRuntimeAttribute type="image" keyPath="clockImage" value="clock2.png"/>
@@ -110,9 +112,10 @@
                                                 </userDefinedRuntimeAttributes>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ctj-Qo-I1b" customClass="AMClockView" customModule="SampleAMClock" customModuleProvider="target">
-                                                <rect key="frame" x="158.5" y="0.0" width="72.5" height="72.5"/>
+                                                <rect key="frame" x="227" y="2.5" width="95" height="95"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
+                                                    <constraint firstAttribute="width" priority="750" constant="110" id="38c-Ie-caa"/>
                                                     <constraint firstAttribute="width" relation="lessThanOrEqual" constant="110" id="LIV-rH-QBs"/>
                                                     <constraint firstAttribute="width" secondItem="Ctj-Qo-I1b" secondAttribute="height" multiplier="1:1" id="oMJ-cK-OeZ"/>
                                                 </constraints>
@@ -129,9 +132,13 @@
                                                 </userDefinedRuntimeAttributes>
                                             </view>
                                         </subviews>
+                                        <constraints>
+                                            <constraint firstItem="oZW-jw-THB" firstAttribute="centerX" secondItem="gHL-Kb-hfd" secondAttribute="centerX" id="95y-dn-oNf"/>
+                                            <constraint firstItem="oZW-jw-THB" firstAttribute="centerY" secondItem="gHL-Kb-hfd" secondAttribute="centerY" id="QFn-y5-Ccs"/>
+                                        </constraints>
                                     </stackView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KVM-ff-q8S" customClass="AMClockView" customModule="SampleAMClock" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="234" width="231" height="231"/>
+                                        <rect key="frame" x="0.0" y="329.5" width="322" height="321.5"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="KVM-ff-q8S" secondAttribute="height" multiplier="1:1" id="jw1-je-Hcx"/>

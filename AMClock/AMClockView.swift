@@ -37,18 +37,23 @@ public protocol AMClockViewDelegate: AnyObject {
 
 private class AMClockModel {
     
-    enum AMCVDateFormat: String {
-        case hour = "HH"
-        case minute = "mm"
-        case time = "HH:mm"
-    }
-    
     enum AMCVTimeEditType {
         case none
         case hour
         case minute
     }
     
+    var timeZone: TimeZone? {
+        didSet {
+            if let timeZone = timeZone {
+                calendar.timeZone = timeZone
+                dateFormatter.timeZone = timeZone
+            } else {
+                calendar.timeZone = .current
+                dateFormatter.timeZone = .current
+            }
+        }
+    }
     var editType: AMCVTimeEditType = .none
     var startAngle: Float = 0.0
     var endAngle: Float = 0.0
@@ -57,23 +62,30 @@ private class AMClockModel {
         return calculateAngle(hour: currentHour)
     }
     var currentMinuteAngle: Float {
-        let angle = (angle360 / 60) * Float(currentMinute)
-        return angle + angle270
-    }
-    var currentHour: Int {
-        return Int(formattedTime(.hour))!
+        return angle270 + anglePerMinute * Float(currentMinute)
     }
     var currentMinute: Int {
-        return Int(formattedTime(.minute))!
+        return currentComponents.minute!
     }
     
     let angle30 = Float(Double.pi / 6)
     let angle270 = Float(Double.pi + Double.pi/2)
+    
+    private var currentHour: Int {
+        return currentComponents.hour!
+    }
+    private var currentComponents: DateComponents {
+        return calendar.dateComponents([.year, .month, .day, .hour, .minute],
+                                       from: currentDate)
+    }
+    private var calendar = Calendar(identifier: .gregorian)
+    
     private let angle360 = Float(Double.pi * 2)
-    private let calendar = Calendar(identifier: .gregorian)
+    private let anglePerHour = Float(Double.pi * 2) / 12
+    private let anglePerMinute = Float(Double.pi * 2) / 60
     private let dateFormatter: DateFormatter = {
         var df = DateFormatter()
-        df.locale = Locale(identifier: "ja_JP")
+        df.dateFormat = "HH:mm"
         return df
     }()
     
@@ -82,14 +94,12 @@ private class AMClockModel {
         return .systemFont(ofSize: length * 0.8)
     }
     
-    func formattedTime(_ format: AMCVDateFormat) -> String {
-        dateFormatter.dateFormat = format.rawValue
+    func formattedTime() -> String {
         return dateFormatter.string(from: currentDate)
     }
     
     func updateCurrentDate(minute: Int) {
-        var components = calendar.dateComponents([.year, .month, .day, .hour, .minute],
-                                                 from: currentDate)
+        var components = currentComponents
         components.minute = minute
         currentDate = calendar.date(from: components)!
     }
@@ -100,13 +110,13 @@ private class AMClockModel {
         
     func calculateHourAngle(point: CGPoint, radius: CGFloat) -> Float {
         let radian = calculateRadian(point: point, radius: radius)
-        let hour = Int((radian - angle270) / (angle360 / 12))
+        let hour = Int((radian - angle270) / anglePerHour)
         return calculateAngle(hour: hour)
     }
     
     func calculateMinute(point: CGPoint, radius: CGFloat) -> Int {
         let radian = calculateRadian(point: point, radius: radius)
-        return Int((radian - angle270) / (angle360 / 60))
+        return Int((radian - angle270) / anglePerMinute)
     }
     
     func revisedByAcrossHour(startAngle: Float, endAngle: Float) {
@@ -175,10 +185,9 @@ private class AMClockModel {
     
     private func calculateAngle(hour: Int) -> Float {
         let hourInt = hour > 12 ? hour - 12 : hour
-        let angle = (angle360 / 12) * Float(hourInt)
-        let hourAngle = angle + angle270
+        let hourAngle = angle270 + anglePerHour * Float(hourInt)
         /// revise by minute
-        return hourAngle + ((Float(currentMinute)/60.0) * angle30)
+        return hourAngle + ((Float(currentMinute)/60.0) * anglePerHour)
     }
 }
 
@@ -210,6 +219,14 @@ private class AMClockModel {
     public weak var delegate: AMClockViewDelegate?
     /// watch dials
     public var clockType: AMCVClockType = .arabic
+    /// Time zone
+    ///
+    /// default is TimeZone.current
+    public var timeZone: TimeZone? {
+        didSet {
+            model.timeZone = timeZone
+        }
+    }
     public var selectedDate: Date? {
         didSet{
             model.currentDate = selectedDate ?? Date()
@@ -611,7 +628,7 @@ private class AMClockModel {
     }
     
     private func changedTime() {
-        selectedTimeLabel.text = model.formattedTime(.time)
+        selectedTimeLabel.text = model.formattedTime()
         delegate?.clockView(self, didChangeDate: model.currentDate)
     }
     
@@ -619,6 +636,6 @@ private class AMClockModel {
         relodClock()
         drawMinuteHandLayer(angle: model.currentMinuteAngle)
         drawHourHandLayer(angle: model.currentHourAngle)
-        selectedTimeLabel.text = model.formattedTime(.time)
+        selectedTimeLabel.text = model.formattedTime()
     }
 }
