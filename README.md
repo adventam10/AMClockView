@@ -59,10 +59,11 @@ The minute hand moves when you draged outside of central circle.
 @IBInspectable public var hourHandImage: UIImage?
 @IBInspectable public var isShowSelectedTime: Bool = false
 public var clockType = AMCVClockType.arabic
+public var timeZone: TimeZone?  // default is TimeZone.current
 public var selectedDate: Date?
 ```
 
-<img width="373" alt="amclock" src="https://user-images.githubusercontent.com/34936885/34641906-29d09d4c-f34e-11e7-8fb8-0e9637f1092d.png">
+![clock](https://user-images.githubusercontent.com/34936885/66701955-20c3c680-ed3d-11e9-8e17-03544afab1bf.png)
 
 ## Installation
 
