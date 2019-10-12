@@ -18,10 +18,21 @@
 		0E475258201E1211002EA382 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E475256201E1211002EA382 /* AppDelegate.swift */; };
 		0E475259201E1211002EA382 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E475257201E1211002EA382 /* ViewController.swift */; };
 		0E475277201E16AC002EA382 /* AMClockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E475276201E16AC002EA382 /* AMClockView.swift */; };
+		0EB3D6382351CE450065073C /* SampleAMClockTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EB3D6372351CE450065073C /* SampleAMClockTests.swift */; };
 		0EB809962000A2420090810F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0EB809942000A2420090810F /* Main.storyboard */; };
 		0EB809982000A2420090810F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0EB809972000A2420090810F /* Assets.xcassets */; };
 		0EB8099B2000A2420090810F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0EB809992000A2420090810F /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		0EB3D63A2351CE450065073C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0EB809852000A2420090810F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0EB8098C2000A2420090810F;
+			remoteInfo = SampleAMClock;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		0E475244201DDCB4002EA382 /* clock2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "clock2@2x.png"; sourceTree = "<group>"; };
@@ -35,6 +46,9 @@
 		0E475256201E1211002EA382 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0E475257201E1211002EA382 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		0E475276201E16AC002EA382 /* AMClockView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMClockView.swift; sourceTree = "<group>"; };
+		0EB3D6352351CE450065073C /* SampleAMClockTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SampleAMClockTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0EB3D6372351CE450065073C /* SampleAMClockTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleAMClockTests.swift; sourceTree = "<group>"; };
+		0EB3D6392351CE450065073C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0EB8098D2000A2420090810F /* SampleAMClock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleAMClock.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0EB809952000A2420090810F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		0EB809972000A2420090810F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -43,6 +57,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0EB3D6322351CE450065073C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0EB8098A2000A2420090810F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -87,10 +108,20 @@
 			path = ../../../AMClock;
 			sourceTree = "<group>";
 		};
+		0EB3D6362351CE450065073C /* SampleAMClockTests */ = {
+			isa = PBXGroup;
+			children = (
+				0EB3D6372351CE450065073C /* SampleAMClockTests.swift */,
+				0EB3D6392351CE450065073C /* Info.plist */,
+			);
+			path = SampleAMClockTests;
+			sourceTree = "<group>";
+		};
 		0EB809842000A2420090810F = {
 			isa = PBXGroup;
 			children = (
 				0EB8098F2000A2420090810F /* SampleAMClock */,
+				0EB3D6362351CE450065073C /* SampleAMClockTests */,
 				0EB8098E2000A2420090810F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -99,6 +130,7 @@
 			isa = PBXGroup;
 			children = (
 				0EB8098D2000A2420090810F /* SampleAMClock.app */,
+				0EB3D6352351CE450065073C /* SampleAMClockTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -119,6 +151,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		0EB3D6342351CE450065073C /* SampleAMClockTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0EB3D63E2351CE450065073C /* Build configuration list for PBXNativeTarget "SampleAMClockTests" */;
+			buildPhases = (
+				0EB3D6312351CE450065073C /* Sources */,
+				0EB3D6322351CE450065073C /* Frameworks */,
+				0EB3D6332351CE450065073C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0EB3D63B2351CE450065073C /* PBXTargetDependency */,
+			);
+			name = SampleAMClockTests;
+			productName = SampleAMClockTests;
+			productReference = 0EB3D6352351CE450065073C /* SampleAMClockTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		0EB8098C2000A2420090810F /* SampleAMClock */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0EB8099F2000A2420090810F /* Build configuration list for PBXNativeTarget "SampleAMClock" */;
@@ -142,10 +192,15 @@
 		0EB809852000A2420090810F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0920;
+				LastSwiftUpdateCheck = 1100;
 				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = am10;
 				TargetAttributes = {
+					0EB3D6342351CE450065073C = {
+						CreatedOnToolsVersion = 11.0;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 0EB8098C2000A2420090810F;
+					};
 					0EB8098C2000A2420090810F = {
 						CreatedOnToolsVersion = 9.2;
 						LastSwiftMigration = 1020;
@@ -167,11 +222,19 @@
 			projectRoot = "";
 			targets = (
 				0EB8098C2000A2420090810F /* SampleAMClock */,
+				0EB3D6342351CE450065073C /* SampleAMClockTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		0EB3D6332351CE450065073C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0EB8098B2000A2420090810F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -193,6 +256,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0EB3D6312351CE450065073C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0EB3D6382351CE450065073C /* SampleAMClockTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0EB809892000A2420090810F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -204,6 +275,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0EB3D63B2351CE450065073C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0EB8098C2000A2420090810F /* SampleAMClock */;
+			targetProxy = 0EB3D63A2351CE450065073C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		0EB809942000A2420090810F /* Main.storyboard */ = {
@@ -225,6 +304,45 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		0EB3D63C2351CE450065073C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = H5QW7TLM9U;
+				INFOPLIST_FILE = SampleAMClockTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = am10.SampleAMClockTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SampleAMClock.app/SampleAMClock";
+			};
+			name = Debug;
+		};
+		0EB3D63D2351CE450065073C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = H5QW7TLM9U;
+				INFOPLIST_FILE = SampleAMClockTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = am10.SampleAMClockTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SampleAMClock.app/SampleAMClock";
+			};
+			name = Release;
+		};
 		0EB8099D2000A2420090810F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -373,6 +491,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0EB3D63E2351CE450065073C /* Build configuration list for PBXNativeTarget "SampleAMClockTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0EB3D63C2351CE450065073C /* Debug */,
+				0EB3D63D2351CE450065073C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		0EB809882000A2420090810F /* Build configuration list for PBXProject "SampleAMClock" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

@@ -35,7 +35,7 @@ public protocol AMClockViewDelegate: AnyObject {
     func clockView(_ clockView: AMClockView, didChangeDate date: Date)
 }
 
-private class AMClockModel {
+internal class AMClockModel {
     
     enum AMCVTimeEditType {
         case none
@@ -67,6 +67,9 @@ private class AMClockModel {
     var currentMinute: Int {
         return currentComponents.minute!
     }
+    var formattedTime: String {
+        return dateFormatter.string(from: currentDate)
+    }
     
     let angle30 = Float(Double.pi / 6)
     let angle270 = Float(Double.pi + Double.pi/2)
@@ -75,7 +78,7 @@ private class AMClockModel {
         return currentComponents.hour!
     }
     private var currentComponents: DateComponents {
-        return calendar.dateComponents([.year, .month, .day, .hour, .minute],
+        return calendar.dateComponents([.year, .month, .day, .hour, .minute, .second],
                                        from: currentDate)
     }
     private var calendar = Calendar(identifier: .gregorian)
@@ -92,10 +95,6 @@ private class AMClockModel {
     func adjustFont(rect: CGRect) -> UIFont {
         let length = (rect.width > rect.height) ? rect.height : rect.width
         return .systemFont(ofSize: length * 0.8)
-    }
-    
-    func formattedTime() -> String {
-        return dateFormatter.string(from: currentDate)
     }
     
     func updateCurrentDate(minute: Int) {
@@ -628,7 +627,7 @@ private class AMClockModel {
     }
     
     private func changedTime() {
-        selectedTimeLabel.text = model.formattedTime()
+        selectedTimeLabel.text = model.formattedTime
         delegate?.clockView(self, didChangeDate: model.currentDate)
     }
     
@@ -636,6 +635,6 @@ private class AMClockModel {
         relodClock()
         drawMinuteHandLayer(angle: model.currentMinuteAngle)
         drawHourHandLayer(angle: model.currentHourAngle)
-        selectedTimeLabel.text = model.formattedTime()
+        selectedTimeLabel.text = model.formattedTime
     }
 }
