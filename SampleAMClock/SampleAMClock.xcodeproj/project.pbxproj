@@ -17,7 +17,7 @@
 		0E475253201DDCB4002EA382 /* minutehand@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0E47524B201DDCB4002EA382 /* minutehand@2x.png */; };
 		0E475258201E1211002EA382 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E475256201E1211002EA382 /* AppDelegate.swift */; };
 		0E475259201E1211002EA382 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E475257201E1211002EA382 /* ViewController.swift */; };
-		0E475277201E16AC002EA382 /* AMClockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E475276201E16AC002EA382 /* AMClockView.swift */; };
+		0EB234DB2354935200442A85 /* AMClockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EB234DA2354935200442A85 /* AMClockView.swift */; };
 		0EB3D6382351CE450065073C /* SampleAMClockTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EB3D6372351CE450065073C /* SampleAMClockTests.swift */; };
 		0EB809962000A2420090810F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0EB809942000A2420090810F /* Main.storyboard */; };
 		0EB809982000A2420090810F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0EB809972000A2420090810F /* Assets.xcassets */; };
@@ -45,7 +45,7 @@
 		0E47524B201DDCB4002EA382 /* minutehand@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "minutehand@2x.png"; sourceTree = "<group>"; };
 		0E475256201E1211002EA382 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0E475257201E1211002EA382 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		0E475276201E16AC002EA382 /* AMClockView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMClockView.swift; sourceTree = "<group>"; };
+		0EB234DA2354935200442A85 /* AMClockView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMClockView.swift; sourceTree = "<group>"; };
 		0EB3D6352351CE450065073C /* SampleAMClockTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SampleAMClockTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0EB3D6372351CE450065073C /* SampleAMClockTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleAMClockTests.swift; sourceTree = "<group>"; };
 		0EB3D6392351CE450065073C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -92,20 +92,20 @@
 		0E475255201E1211002EA382 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				0E475275201E16AC002EA382 /* AMClock */,
+				0EB234D92354935200442A85 /* Source */,
 				0E475256201E1211002EA382 /* AppDelegate.swift */,
 				0E475257201E1211002EA382 /* ViewController.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
 		};
-		0E475275201E16AC002EA382 /* AMClock */ = {
+		0EB234D92354935200442A85 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				0E475276201E16AC002EA382 /* AMClockView.swift */,
+				0EB234DA2354935200442A85 /* AMClockView.swift */,
 			);
-			name = AMClock;
-			path = ../../../AMClock;
+			name = Source;
+			path = ../../../Source;
 			sourceTree = "<group>";
 		};
 		0EB3D6362351CE450065073C /* SampleAMClockTests */ = {
@@ -268,7 +268,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0E475277201E16AC002EA382 /* AMClockView.swift in Sources */,
+				0EB234DB2354935200442A85 /* AMClockView.swift in Sources */,
 				0E475259201E1211002EA382 /* ViewController.swift in Sources */,
 				0E475258201E1211002EA382 /* AppDelegate.swift in Sources */,
 			);
