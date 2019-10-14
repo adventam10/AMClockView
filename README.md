@@ -4,6 +4,7 @@
 ![Pod License](https://img.shields.io/cocoapods/l/AMClockView.svg?style=flat)
 [![Pod Version](https://img.shields.io/cocoapods/v/AMClockView.svg?style=flat)](http://cocoapods.org/pods/AMClockView)
 [![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![Swift Package Manager compatible](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)
 
 `AMClockView` is a view can select time.
 
@@ -70,6 +71,7 @@ public var selectedDate: Date?
 ### CocoaPods
 
 Add this to your Podfile.
+
 ```ogdl
 pod 'AMClockView'
 ```
